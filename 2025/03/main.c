@@ -1,32 +1,28 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 #define MAXLINE 1000
 
-/*
-    1. largest index not ending
-    2. largest index after that */
+long joltage(char * line, int n) {
+    if (n < 0)
+        return -1;
+    if (n == 0)
+        return 0;
 
-int joltage(char * line) {
-    int maxL = 0; 
     int indexL = 0;
+    int maxL = 0;
     int len = strlen(line);
     int i, c;
 
-    for (i = 0; i < len - 1; i++) {
+    for (i = 0; i < len - n + 1; i++) {
         if ((c = (line[i] - '0')) > maxL) {
             maxL = c;
             indexL = i;
-        }
+        }    
     }
-
-    int maxR = 0;
-    for (i = indexL + 1; i < len; i++){
-        if ((c = (line[i] - '0')) > maxR)
-            maxR = c;
-    }
-    return 10 * maxL + maxR;
+    return maxL * pow(10, n - 1) + joltage(line + indexL + 1, n - 1);
 }
 
 int main(int argc, char * argv[]) {
@@ -42,15 +38,14 @@ int main(int argc, char * argv[]) {
     }
 
     char line[MAXLINE];
-    int sum1 = 0;
-    int v, count = 0;
+    long sum1 = 0, sum2 = 0;
     while(fgets(line, MAXLINE, fp)) {
         line[strlen(line) - 1] = '\0'; // remove '\n'
-        v = joltage(line);
-        count++; //test
-        sum1 += v; //test
+        sum1 += joltage(line, 2);
+        sum2 += joltage(line, 12);
     }
 
-    printf("P1:\t%d\n", sum1);
+    printf("P1:\t%ld\n", sum1);
+    printf("P2:\t%ld\n", sum2);
     fclose(fp);
 }
