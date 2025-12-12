@@ -22,7 +22,7 @@ int main(int argc, char * argv[]) {
     }
 
     char line[MAXLINE];
-    int p1;
+    int p1 = 0, p2 = 0;
 
     int row = 0, col = 0;
     while(fgets(line, MAXLINE, fp)) {
@@ -39,7 +39,22 @@ int main(int argc, char * argv[]) {
                 p1++;
         }
     }
+    /* not modified yet */
+    int removed = 1;
+    while (removed) {
+        removed = 0;
+        for (row = 0; row < SIZE; row++) {
+            for (col = 0; col < SIZE; col++) {
+                if (a[row][col] && adjacent(row, col) < 4) {
+                    p2++;
+                    a[row][col] = 0;
+                    removed = 1;
+                }
+            }
+        }
+    }
     printf("P1:\t%d\n", p1);
+    printf("P2:\t%d\n", p2);
 
     fclose(fp);
 }
