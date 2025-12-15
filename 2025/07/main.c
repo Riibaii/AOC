@@ -11,7 +11,7 @@
 #define DOT 0
 #define SPL 4
 
-int a[MAXROW][MAXCOL];
+long a[MAXROW][MAXCOL];
 
 int main(int argc, char * argv[]) {
     FILE * fp;
@@ -24,10 +24,10 @@ int main(int argc, char * argv[]) {
         return -1;
     }
 
-    long p1 = 0, p2 = 0;
-
+    long p1 = 0;
     int row = 0, col = 0;
     char line[MAXLINE];
+
     while(fgets(line, MAXLINE, fp)) {
         for (col=0; line[col]!='\n'; col++) {
             if (line[col] == '.')
@@ -46,7 +46,7 @@ int main(int argc, char * argv[]) {
                 if (a[row][col] == DOT)
                     a[row][col] = RAY;
                 else if (a[row][col] == SPL) {
-                    if (col-1>0)      a[row][col-1] = RAY;
+                    if (col-1>=0)     a[row][col-1] = RAY;
                     if (col+1<MAXCOL) a[row][col+1] = RAY;
                     p1++;
                 }
@@ -54,8 +54,22 @@ int main(int argc, char * argv[]) {
         }
     }
 
+    for (row=MAXROW-1; row>=0; row--) {
+        for (col=0; col<MAXCOL; col++) {
+            if (a[row][col] == RAY) {
+                if (row == MAXROW-1)
+                    a[row][col] = -1;
+                else if (a[row+1][col] < 0)
+                    a[row][col] = a[row+1][col];
+                else if (a[row+1][col] == SPL) {
+                    a[row][col] = a[row+1][col-1]+a[row+1][col+1];
+                }
+            }
+        }
+    }
+
     printf("P1:\t%ld\n", p1);
-    printf("P2:\t%ld\n", p2);
+    printf("P2:\t%ld\n", a[0][MAXCOL/2] * -1);
 
     fclose(fp);
 }
